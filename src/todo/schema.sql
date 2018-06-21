@@ -1,0 +1,16 @@
+DROP TABLE IF EXISTS task;
+DROP TABLE IF EXISTS todo_list;
+
+CREATE TABLE todo_list (
+  id TEXT PRIMARY KEY UNIQUE NOT NULL,
+  name TEXT UNIQUE NOT NULL,
+  description TEXT
+);
+
+CREATE TABLE task (
+  id TEXT PRIMARY KEY UNIQUE NOT NULL,
+  list_id TEXT NOT NULL,
+  name TEXT NOT NULL,
+  completed BOOLEAN DEFAULT FALSE,
+  FOREIGN KEY (list_id) REFERENCES todo_list (id)
+);
