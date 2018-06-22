@@ -1,10 +1,9 @@
-# API Changes
-I made very limited changes to the api as defined [here](https://app.swaggerhub.com/apis/aweiker/ToDo/1.0.0#/todo/addTask).
-
-## POST /list/{id}/tasks
-Specs say input object takes an 'id', but that should be set by the server, not the client.
-Specs don't specify the response body, so I chose to return the JSON-serialized newly created task.
-
+## Design Notes
+* meant to be run inside a container (Docker) for production, or directly on the developer's machine for development.
+* should be fronted by NginX+WSGI (gUnicorn) or similar for protection and scaling, if this were to be shipped.
+* alt: work from raw socket to show off some ninja sk33llz, we don't need no framework!
+* use async framework for scalability
+* no string localization
 
 # Implementation alternatives
 Stuff I could have done differently or chose not to do in the interest of time.
