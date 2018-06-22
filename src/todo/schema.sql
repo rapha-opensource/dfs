@@ -11,6 +11,6 @@ CREATE TABLE task (
   id TEXT PRIMARY KEY UNIQUE NOT NULL,
   list_id TEXT NOT NULL,
   name TEXT NOT NULL,
-  completed BOOLEAN DEFAULT FALSE,
+  completed INTEGER DEFAULT FALSE,
   FOREIGN KEY (list_id) REFERENCES todo_list (id)
 );
