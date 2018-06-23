@@ -63,25 +63,21 @@ def lists():
     select_tasks = f'SELECT * FROM task WHERE list_id IN ({select.format(columns="id")})'
     #print(f'select tasks: {select_tasks}')
     tasks = tuple(
-        map(
-            lambda task_row: dict(
-                task_row,
-                completed=bool(task_row['completed'])
-            ),
-            db.execute(select_tasks, limit_skip)
+        dict(
+            task_row,
+            completed=bool(task_row['completed'])
         )
+        for task_row in db.execute(select_tasks, limit_skip)
     )
     return jsonify(
         tuple(
             dict(
                 todo_list_row,
                 tasks=tuple(
-                    filter(
-                        lambda task: task['list_id'] == todo_list_row['id'],
-                        tasks
-                    )
+                    task for task in tasks if task['list_id'] == todo_list_row['id']
                 )
-            ) for todo_list_row in todo_list_rows
+            )
+            for todo_list_row in todo_list_rows
         )
     )
 
