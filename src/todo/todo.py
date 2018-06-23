@@ -47,22 +47,28 @@ def lists():
     skip = _int(request.args, 'skip')
     limit = _int(request.args, 'limit', default=-1)
     db = get_db()
-    select = 'SELECT {} FROM todo_list'
+    select = 'SELECT {columns} FROM todo_list'
     if searchString:
         select += f' WHERE name LIKE "{searchString}"'
-    select += f' LIMIT {limit} OFFSET {skip}'
+    select += ' LIMIT :limit OFFSET :skip'
     #print(f'SQL: {select}')
-    todo_list_rows = db.execute(select.format('id, name, description'))
-    select_lists_ids = select.format('id')
-    select_tasks = f'SELECT * FROM task WHERE list_id IN ({select_lists_ids});'
+    limit_skip = {
+        'limit': limit,
+        'skip': skip
+    }
+    todo_list_rows = db.execute(
+        select.format(columns='id, name, description'),
+        limit_skip
+    )
+    select_tasks = f'SELECT * FROM task WHERE list_id IN ({select.format(columns="id")})'
     #print(f'select tasks: {select_tasks}')
     tasks = tuple(
         map(
-            lambda _dict: dict(_dict, completed=bool(_dict['completed'])),
-            map(
-                dict,
-                db.execute(select_tasks)
-            )
+            lambda task_row: dict(
+                task_row,
+                completed=bool(task_row['completed'])
+            ),
+            db.execute(select_tasks, limit_skip)
         )
     )
     return jsonify(
